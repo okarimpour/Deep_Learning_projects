@@ -1,14 +1,23 @@
- Number of training examples: m_train = 209
+Number of training examples: m_train = 209
 Number of testing examples: m_test = 50
 Each image is of size: (64, 64, 3)
 train_set_x shape: (209, 64, 64, 3)
 train_set_y shape: (1, 209)
 test_set_x shape: (50, 64, 64, 3)
 test_set_y shape: (1, 50)
+
+-------------------------------------------------------
+
 train_set_x_flatten shape: (12288, 209)
 test_set_x_flatten shape: (12288, 50)
 sanity check after reshaping: [17 31 56 22 33]
+
+-------------------------------------------------------
+
 Training set lenght is 12288
+
+-------------------------------------------------------
+
 Cost after iteration 0: 0.693147
 Cost after iteration 100: 0.584508
 Cost after iteration 200: 0.466949
@@ -93,3 +102,5 @@ Cost after iteration 1900: 0.140872
  1.82858623e-01]
 train accuracy: 99.04306220095694 %
 test accuracy: 70.0 %
+[0.88839716]
+y = 1.0, your algorithm predicts a "cat" picture.

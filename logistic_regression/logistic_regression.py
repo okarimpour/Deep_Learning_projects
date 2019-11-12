@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import h5py
 import scipy
+import skimage.measure
+import skimage.transform
 from PIL import Image
 from scipy import ndimage
 from lr_utils import load_dataset
@@ -22,6 +24,7 @@ print ("train_set_x shape: " + str(train_set_x_orig.shape))
 print ("train_set_y shape: " + str(train_set_y.shape))
 print ("test_set_x shape: " + str(test_set_x_orig.shape))
 print ("test_set_y shape: " + str(test_set_y.shape))
+print ('\n' + "-------------------------------------------------------" + '\n')
 
 #Reshape the training and test examples
 train_set_x_flatten = train_set_x_orig.reshape(train_set_x_orig.shape[0], -1).T
@@ -29,11 +32,13 @@ test_set_x_flatten = test_set_x_orig.reshape(test_set_x_orig.shape[0], -1).T
 print ("train_set_x_flatten shape: " + str(train_set_x_flatten.shape))
 print ("test_set_x_flatten shape: " + str(test_set_x_flatten.shape))
 print ("sanity check after reshaping: " + str(train_set_x_flatten[0:5,0]))
-
+print ('\n' + "-------------------------------------------------------" + '\n')
+    
 #standardize
 train_set_x = train_set_x_flatten/255
 test_set_x = test_set_x_flatten/255
 print ("Training set lenght is " + str(len(train_set_x)))
+print ('\n' + "-------------------------------------------------------" + '\n')
 
 #Sigmoid Implimentation
 def sigmoid(z):
@@ -145,17 +150,46 @@ def model(X_train, Y_train, X_test, Y_test, num_iterations = 2000, learning_rate
 
 d = model(train_set_x, train_set_y, test_set_x, test_set_y, num_iterations = 2000, learning_rate = 0.005, print_cost = True)
 
-#Plot leaning curve and showing sample image
+#Plot leaning curve
 """
-index = 1
-plt.imshow(test_set_x[:, index].reshape(num_px, num_px, 3))
-plt.show()
-print("Y = " + str(test_set_y[0, index]) + ", you predicted that it was a \"" + classes[int(d["Y_prediction_test"][0,index])].decode("utf-8") + "\" picture")
-
 costs = np.squeeze(d['costs'])
 plt.plot(costs)
 plt.ylabel('cost')
 plt.xlabel('iterations (per hundreds)')
 plt.title("Learning rate =" + str(d["learning_rate"]))
 plt.show()
+"""
+
+#Comparing differet learning rates
+"""
+learning_rates = [0.01, 0.001, 0.0001]
+models = {}
+print ('\n' + "-------------------------------------------------------" + '\n')
+for i in learning_rates:
+    print ("learning rate is: " + str(i))
+    models[str(i)] = model(train_set_x, train_set_y, test_set_x, test_set_y, num_iterations = 1500, learning_rate = i, print_cost = False)
+    print ('\n' + "-------------------------------------------------------" + '\n')
+
+for i in learning_rates:
+    plt.plot(np.squeeze(models[str(i)]["costs"]), label= str(models[str(i)]["learning_rate"]))
+
+plt.ylabel('cost')
+plt.xlabel('iterations')
+
+legend = plt.legend(loc='upper center', shadow=True)
+frame = legend.get_frame()
+frame.set_facecolor('0.90')
+plt.show()
+"""
+
+#Test a random picture
+"""
+my_image = "my_image2.jpg"
+fname = "images/" + my_image
+image = np.array(plt.imread(fname))
+my_image = skimage.transform.resize(image, output_shape=(num_px,num_px)).reshape((1, num_px*num_px*3)).T
+my_predicted_image = predict(d["w"], d["b"], my_image)
+
+plt.imshow(image)
+print("y = " + str(np.squeeze(my_predicted_image)) + ", your algorithm predicts a \"" + classes[int(np.squeeze(my_predicted_image)),].decode("utf-8") +  "\" picture.")
 """
