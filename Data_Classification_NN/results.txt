@@ -1,0 +1,13 @@
+The shape of X is: (2, 400)
+The shape of Y is: (1, 400)
+I have m = 400 training examples!
+Cost after iteration 0: 0.693048
+Cost after iteration 1000: 0.288083
+Cost after iteration 2000: 0.254385
+Cost after iteration 3000: 0.233864
+Cost after iteration 4000: 0.226792
+Cost after iteration 5000: 0.222644
+Cost after iteration 6000: 0.219731
+Cost after iteration 7000: 0.217504
+Cost after iteration 8000: 0.219456
+Cost after iteration 9000: 0.218558
