@@ -21,14 +21,6 @@ np.random.seed(1)
 
 train_x_orig, train_y, test_x_orig, test_y, classes = load_data()
 
-# Example of a picture
-"""
-index = 10
-plt.imshow(train_x_orig[index])
-plt.show()
-print ("y = " + str(train_y[0,index]) + ". It's a " + classes[train_y[0,index]].decode("utf-8") +  " picture.")
-"""
-
 #Explore your dataset
 m_train = train_x_orig.shape[0]
 num_px = train_x_orig.shape[1]
@@ -52,28 +44,6 @@ test_x = test_x_flatten/255.
 
 print ("train_x's shape: " + str(train_x.shape))
 print ("test_x's shape: " + str(test_x.shape))
-
-# initialize_parameters
-def initialize_parameters(n_x, n_h, n_y):
-    
-    np.random.seed(1)
-    
-    W1 = np.random.randn(n_h, n_x) * 0.01
-    b1 = np.zeros((n_h, 1))
-    W2 = np.random.randn(n_y, n_h) * 0.01
-    b2 = np.zeros((n_y, 1))
-    
-    assert(W1.shape == (n_h, n_x))
-    assert(b1.shape == (n_h, 1))
-    assert(W2.shape == (n_y, n_h))
-    assert(b2.shape == (n_y, 1))
-    
-    parameters = {"W1": W1,
-                  "b1": b1,
-                  "W2": W2,
-                  "b2": b2}
-    
-    return parameters
 
 def initialize_parameters_deep(layer_dims):
 
@@ -119,6 +89,28 @@ def linear_activation_forward(A_prev, W, b, activation):
 
     return A, cache
 
+# L_model_forward
+def L_model_forward(X, parameters):
+
+    caches = []
+    A = X
+    L = len(parameters) // 2                  # number of layers in the neural network
+    
+    # Implement [LINEAR -> RELU]*(L-1). Add "cache" to the "caches" list.
+    for l in range(1, L):
+        A_prev = A
+        
+        A, cache = linear_activation_forward(A_prev, parameters['W' + str(l)], parameters['b' + str(l)], activation = "relu")
+        caches.append(cache)
+    
+    # Implement LINEAR -> SIGMOID. Add "cache" to the "caches" list.
+    AL, cache = linear_activation_forward(A, parameters['W' + str(L)], parameters['b' + str(L)], activation = "sigmoid")
+    caches.append(cache)
+    
+    assert(AL.shape == (1,X.shape[1]))
+            
+    return AL, caches
+
 # compute_cost
 def compute_cost(AL, Y):
     
@@ -154,16 +146,40 @@ def linear_activation_backward(dA, cache, activation):
     linear_cache, activation_cache = cache
     
     if activation == "relu":
-        ### START CODE HERE ### (≈ 2 lines of code)
         dZ = relu_backward(dA, activation_cache)
         dA_prev, dW, db = linear_backward(dZ, linear_cache)
         
     elif activation == "sigmoid":
-        ### START CODE HERE ### (≈ 2 lines of code)
         dZ = sigmoid_backward(dA, activation_cache)
         dA_prev, dW, db = linear_backward(dZ, linear_cache)
     
     return dA_prev, dW, db
+    
+# L_model_backward
+def L_model_backward(AL, Y, caches):
+
+    grads = {}
+    L = len(caches) # the number of layers
+    m = AL.shape[1]
+    Y = Y.reshape(AL.shape) # after this line, Y is the same shape as AL
+    
+    # Initializing the backpropagation
+    dAL = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL))
+    
+    # Lth layer (SIGMOID -> LINEAR) gradients. Inputs: "AL, Y, caches". Outputs: "grads["dAL"], grads["dWL"], grads["dbL"]
+    current_cache = caches[-1]
+    grads["dA" + str(L)], grads["dW" + str(L)], grads["db" + str(L)] = linear_activation_backward(dAL, current_cache, activation = "sigmoid")
+    
+    for l in reversed(range(L-1)):
+        # lth layer: (RELU -> LINEAR) gradients.
+        # Inputs: "grads["dA" + str(l + 2)], caches". Outputs: "grads["dA" + str(l + 1)] , grads["dW" + str(l + 1)] , grads["db" + str(l + 1)]
+        current_cache = caches[l]
+        dA_prev_temp, dW_temp, db_Temp = linear_activation_backward(grads["dA" + str(l + 2)], current_cache, activation = "relu")
+        grads["dA" + str(l + 1)] = dA_prev_temp
+        grads["dW" + str(l + 1)] = dW_temp
+        grads["db" + str(l + 1)] = db_Temp
+
+    return grads
 
 # update_parameters
 def update_parameters(parameters, grads, learning_rate):
@@ -177,80 +193,48 @@ def update_parameters(parameters, grads, learning_rate):
     
     return parameters
     
-### CONSTANTS DEFINING THE MODEL ####
-n_x = 12288     # num_px * num_px * 3
-n_h = 7
-n_y = 1
-layers_dims = (n_x, n_h, n_y)
+layers_dims = [12288, 20, 7, 5, 1] #  5-layer model
 
-# two_layer_model
-def two_layer_model(X, Y, layers_dims, learning_rate = 0.0075, num_iterations = 3000, print_cost=False):
-   
+#L_layer_model
+def L_layer_model(X, Y, layers_dims, learning_rate = 0.0075, num_iterations = 3000, print_cost=False):#lr was 0.009
+
     np.random.seed(1)
-    grads = {}
-    costs = []                              # to keep track of the cost
-    m = X.shape[1]                           # number of examples
-    (n_x, n_h, n_y) = layers_dims
+    costs = []                         # keep track of cost
     
-    # Initialize parameters dictionary, by calling one of the functions you'd previously implemented
-    parameters = initialize_parameters(n_x, n_h, n_y)
-    
-    # Get W1, b1, W2 and b2 from the dictionary parameters.
-    W1 = parameters["W1"]
-    b1 = parameters["b1"]
-    W2 = parameters["W2"]
-    b2 = parameters["b2"]
+    # Parameters initialization.
+    parameters = initialize_parameters_deep(layers_dims)
     
     # Loop (gradient descent)
     for i in range(0, num_iterations):
 
-        # Forward propagation: LINEAR -> RELU -> LINEAR -> SIGMOID. Inputs: "X, W1, b1". Output: "A1, cache1, A2, cache2".
-        A1, cache1 = linear_activation_forward(X, W1, b1, activation='relu')
-        A2, cache2 = linear_activation_forward(A1, W2, b2, activation='sigmoid')
+        # Forward propagation: [LINEAR -> RELU]*(L-1) -> LINEAR -> SIGMOID.
+        AL, caches = L_model_forward(X, parameters)
         
-        # Compute cost
-        cost = compute_cost(A2, Y)
-        
-        # Initializing backward propagation
-        dA2 = - (np.divide(Y, A2) - np.divide(1 - Y, 1 - A2))
-        
-        # Backward propagation. Inputs: "dA2, cache2, cache1". Outputs: "dA1, dW2, db2; also dA0 (not used), dW1, db1".
-        dA1, dW2, db2 = linear_activation_backward(dA2, cache2, activation='sigmoid')
-        dA0, dW1, db1 = linear_activation_backward(dA1, cache1, activation='relu')
-        
-        # Set grads['dWl'] to dW1, grads['db1'] to db1, grads['dW2'] to dW2, grads['db2'] to db2
-        grads['dW1'] = dW1
-        grads['db1'] = db1
-        grads['dW2'] = dW2
-        grads['db2'] = db2
-        
+        # Compute cost.
+        cost = compute_cost(AL, Y)
+    
+        # Backward propagation.
+        grads = L_model_backward(AL, Y, caches)
+ 
         # Update parameters.
         parameters = update_parameters(parameters, grads, learning_rate = learning_rate)
-
-        # Retrieve W1, b1, W2, b2 from parameters
-        W1 = parameters["W1"]
-        b1 = parameters["b1"]
-        W2 = parameters["W2"]
-        b2 = parameters["b2"]
-        
+                
         # Print the cost every 100 training example
         if print_cost and i % 100 == 0:
-            print("Cost after iteration {}: {}".format(i, np.squeeze(cost)))
+            print ("Cost after iteration %i: %f" %(i, cost))
         if print_cost and i % 100 == 0:
             costs.append(cost)
-       
+            
     # plot the cost
     plt.plot(np.squeeze(costs))
-    plt.show()
     plt.ylabel('cost')
     plt.xlabel('iterations (per tens)')
-    plt.title("Learning rate =" + str(learning_rate))
+    plt.title("Learning rate = " + str(learning_rate))
+    plt.show()
     
     return parameters
 
-layers_dims = [12288, 20, 7, 5, 1] #  5-layer model
-
-parameters = two_layer_model(train_x, train_y, layers_dims = (n_x, n_h, n_y), num_iterations = 2500, print_cost=True)
-predictions_train = predict(train_x, train_y, parameters)
-predictions_test = predict(test_x, test_y, parameters)
+parameters = L_layer_model(train_x, train_y, layers_dims, num_iterations = 2500, print_cost = True)
+pred_train = predict(train_x, train_y, parameters)
+pred_test = predict(test_x, test_y, parameters)
 

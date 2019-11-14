@@ -1,8 +1,0 @@
-y = 0. It's a non-cat picture.
-Number of training examples: 209
-Number of testing examples: 50
-Each image is of size: (64, 64, 3)
-train_x_orig shape: (209, 64, 64, 3)
-train_y shape: (1, 209)
-test_x_orig shape: (50, 64, 64, 3)
-test_y shape: (1, 50)

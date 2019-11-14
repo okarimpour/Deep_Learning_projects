@@ -1,0 +1,36 @@
+Number of training examples: 209
+Number of testing examples: 50
+Each image is of size: (64, 64, 3)
+train_x_orig shape: (209, 64, 64, 3)
+train_y shape: (1, 209)
+test_x_orig shape: (50, 64, 64, 3)
+test_y shape: (1, 50)
+train_x's shape: (12288, 209)
+test_x's shape: (12288, 50)
+Cost after iteration 0: 0.693049735659989
+Cost after iteration 100: 0.6464320953428849
+Cost after iteration 200: 0.6325140647912678
+Cost after iteration 300: 0.6015024920354665
+Cost after iteration 400: 0.5601966311605747
+Cost after iteration 500: 0.5158304772764729
+Cost after iteration 600: 0.4754901313943325
+Cost after iteration 700: 0.43391631512257495
+Cost after iteration 800: 0.4007977536203887
+Cost after iteration 900: 0.3580705011323798
+Cost after iteration 1000: 0.3394281538366413
+Cost after iteration 1100: 0.3052753636196265
+Cost after iteration 1200: 0.2749137728213016
+Cost after iteration 1300: 0.24681768210614854
+Cost after iteration 1400: 0.19850735037466108
+Cost after iteration 1500: 0.17448318112556635
+Cost after iteration 1600: 0.17080762978096523
+Cost after iteration 1700: 0.11306524562164719
+Cost after iteration 1800: 0.09629426845937146
+Cost after iteration 1900: 0.08342617959726861
+Cost after iteration 2000: 0.07439078704319078
+Cost after iteration 2100: 0.0663074813226793
+Cost after iteration 2200: 0.059193295010381675
+Cost after iteration 2300: 0.053361403485605544
+Cost after iteration 2400: 0.04855478562877018
+Accuracy: 0.9999999999999998
+Accuracy: 0.72
