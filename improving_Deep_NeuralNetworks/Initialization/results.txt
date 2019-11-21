@@ -1,0 +1,29 @@
+W1 = [[ 1.78862847  0.43650985]
+ [ 0.09649747 -1.8634927 ]
+ [-0.2773882  -0.35475898]
+ [-0.08274148 -0.62700068]]
+b1 = [[0.]
+ [0.]
+ [0.]
+ [0.]]
+W2 = [[-0.03098412 -0.33744411 -0.92904268  0.62552248]]
+b2 = [[0.]]
+Cost after iteration 0: 0.8830537463419761
+Cost after iteration 1000: 0.6879825919728063
+Cost after iteration 2000: 0.6751286264523371
+Cost after iteration 3000: 0.6526117768893807
+Cost after iteration 4000: 0.6082958970572938
+Cost after iteration 5000: 0.5304944491717495
+Cost after iteration 6000: 0.4138645817071795
+Cost after iteration 7000: 0.31178034648444414
+Cost after iteration 8000: 0.2369621533032257
+Cost after iteration 9000: 0.18597287209206845
+Cost after iteration 10000: 0.1501555628037181
+Cost after iteration 11000: 0.12325079292273548
+Cost after iteration 12000: 0.09917746546525937
+Cost after iteration 13000: 0.08457055954024273
+Cost after iteration 14000: 0.07357895962677366
+On the train set:
+Accuracy: 0.9933333333333333
+On the test set:
+Accuracy: 0.96

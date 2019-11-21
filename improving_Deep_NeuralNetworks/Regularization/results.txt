@@ -1,0 +1,7 @@
+Cost after iteration 0: 0.6543912405149825
+Cost after iteration 10000: 0.061016986574905605
+Cost after iteration 20000: 0.060582435798513114
+On the train set:
+Accuracy: 0.9289099526066351
+On the test set:
+Accuracy: 0.95
