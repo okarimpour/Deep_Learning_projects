@@ -1,0 +1,1 @@
+Your backward propagation works perfectly fine! difference = 1.1890913023330276e-07
