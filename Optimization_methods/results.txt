@@ -1,0 +1,11 @@
+Cost after epoch 0: 0.690552
+Cost after epoch 1000: 0.185501
+Cost after epoch 2000: 0.150830
+Cost after epoch 3000: 0.074454
+Cost after epoch 4000: 0.125959
+Cost after epoch 5000: 0.104344
+Cost after epoch 6000: 0.100676
+Cost after epoch 7000: 0.031652
+Cost after epoch 8000: 0.111973
+Cost after epoch 9000: 0.197940
+Accuracy: 0.94
